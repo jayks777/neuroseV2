@@ -1,0 +1,79 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(rgb(20, 20, 88), rgb(21, 18, 43)) no-repeat;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    /* background-image: url("./src/assets/large.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center; */
+}
+
+.container{
+    display: grid;
+    background-color: rgb(250, 250, 250);
+    color: rgb( 32, 32, 32);
+    text-align: left;
+    width: fit-content;
+    height: auto;
+    box-shadow: 10px 10px 10px rgb(32, 32, 32);
+}
+
+img{
+    width: 40vh;
+    height: auto;
+}
+
+
+.container a{
+    text-decoration: none;
+}
+
+form{
+    margin:0 50px 30px 50px;
+}
+
+.container button{
+    background-color: blue;
+    color: rgb(250, 250, 250);
+    font-weight: bold;
+    height: 30px;
+    display: block;
+    justify-self: center;
+    border: none;
+    width: 100%;
+}
+
+.form-input{
+    margin: 20px 0 20px 0;
+    position: relative;
+}
+
+
+input{
+    width: 100%;
+    border: none;
+    height: 30px;
+    background-color: slateblue;
+    border-radius: 15px;
+    color: rgb(250, 250, 250);
+    text-indent: 20px;
+}
+
+input::placeholder{
+    text-indent: 20px;
+    color: rgb(175, 175, 175);
+}
+
+input:focus{
+    outline-color: slateblue;
+    background-color: rgb(250, 250, 250);
+    color: slateblue;
+}
+
+button:hover{
+    background-color: rgb(0, 0, 156);
+    cursor: pointer;
+}
