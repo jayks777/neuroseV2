@@ -3,3 +3,5 @@ uvicorn
 sqlalchemy
 pydantic
 dotenv
+alembic
+psycopg2-binary
