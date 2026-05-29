@@ -12,11 +12,15 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     
     """Cria um novo usuário no banco de dados."""
     
-    db_user = models.User(name=user.name, email=user.email)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+    usr = db.query(models.User).filter(models.User.email == user.email).first()
+    if usr:
+        return {"error": "User already exists"}
+    else:
+        db_user = models.User(name=user.name, email=user.email)
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return db_user
 
 #leitura de usuários
 @router.get("/")

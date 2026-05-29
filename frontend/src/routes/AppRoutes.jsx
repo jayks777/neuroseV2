@@ -8,7 +8,7 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/test" element={<Test />} />
+        {/* <Route path="/test" element={<Test />} /> */}
         
         {/* Erro 404. NÃO retornar nunca erro 500 da api*/}
         <Route path="*" element={<NotFound/>}/>

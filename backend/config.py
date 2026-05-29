@@ -4,7 +4,7 @@ from routes.user import router as user_router
 #incluir todas as configurações aqui
 def configure_all(app):
     configure_cors(app)
-    configure_database(app)
+    configure_database()
     configure_routes(app)
 
 def configure_cors(app):
@@ -16,7 +16,7 @@ def configure_cors(app):
         allow_headers=["*"],
     )
 
-def configure_database(app):
+def configure_database():
     from db.db import engine, Base
     Base.metadata.create_all(bind=engine)
 

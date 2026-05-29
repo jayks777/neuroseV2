@@ -1,62 +1,83 @@
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-
-$RED = "`e[31m"
-$GREEN = "`e[32m"
-$YELLOW = "`e[33m"
-$CYAN = "`e[36m"
-$RESET = "`e[0m"
-
-Write-Host "${YELLOW}[i] Verificando dependências...${RESET}"
-
-# Detectar Python
-if (Get-Command python -ErrorAction SilentlyContinue) {
-    $py = "python"
-}
-elseif (Get-Command py -ErrorAction SilentlyContinue) {
-    $py = "py"
-}
-else {
-    Write-Host "${RED}[X] Python não instalado ou não está no PATH.${RESET}"
-    exit
+function Info($msg) {
+    Write-Host "[i] $msg"
 }
 
-# Verificar Node
+function Success($msg) {
+    Write-Host "[OK] $msg"
+}
+
+function ErrorMsg($msg) {
+    Write-Host "[ERRO] $msg"
+}
+
+$ROOT = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+$BACKEND = Join-Path $ROOT "backend"
+$FRONTEND = Join-Path $ROOT "frontend"
+
+Info "Verificando dependencias..."
+
+if (!(Get-Command python -ErrorAction SilentlyContinue) -and !(Get-Command py -ErrorAction SilentlyContinue)) {
+    ErrorMsg "Python nao encontrado."
+    exit 1
+}
+
 if (!(Get-Command node -ErrorAction SilentlyContinue)) {
-    Write-Host "${RED}[X] Node não instalado ou não está no PATH.${RESET}"
-    exit
+    ErrorMsg "Node.js nao encontrado."
+    exit 1
 }
 
-# Verificar npm
 if (!(Get-Command npm -ErrorAction SilentlyContinue)) {
-    Write-Host "${RED}[X] npm não instalado ou não está no PATH.${RESET}"
-    exit
+    ErrorMsg "npm nao encontrado."
+    exit 1
 }
 
-Write-Host "${GREEN}[✓] Dependências OK${RESET}"
+Success "Dependencias OK"
 
-# ========================
-# BACKEND
-# ========================
-Write-Host "${CYAN}[i] Configurando backend...${RESET}"
+Info "Instalando dependencias do backend..."
 
-Set-Location .\backend
+Push-Location $BACKEND
 
-& $py -m pip install -r requirements.txt -q
+pip install -r requirements.txt
 
-Write-Host "${GREEN}[✓] Backend pronto${RESET}"
+if ($LASTEXITCODE -ne 0) {
+    ErrorMsg "Erro ao instalar dependencias do backend."
+    Pop-Location
+    exit 1
+}
 
-# Rodar backend em outro terminal
-#Start-Process powershell -ArgumentList '-NoExit -Command "& python -m uvicorn app:app --reload"'
+Success "Backend pronto"
 
-Set-Location ..
+Pop-Location
 
-Write-Host "${CYAN}[i] Configurando frontend...${RESET}"
+Info "Instalando dependencias do frontend..."
 
-Set-Location .\frontend
+Push-Location $FRONTEND
 
-npm install --silent
+npm install
 
-Write-Host "${GREEN}[v] Frontend pronto${RESET}"
-#Write-Host "${CYAN}[i] Iniciando frontend...${RESET}"
+if ($LASTEXITCODE -ne 0) {
+    ErrorMsg "Erro ao instalar dependencias do frontend."
+    Pop-Location
+    exit 1
+}
+
+Success "Frontend pronto"
+
+Pop-Location
+
+Info "Iniciando backend em segundo plano..."
+
+Start-Job -ScriptBlock {
+    Set-Location $using:BACKEND
+    uvicorn app:app --reload
+} | Out-Null
+
+Success "Backend iniciado"
+
+Info "Iniciando frontend..."
+
+Set-Location $FRONTEND
 
 npm run dev
+```
