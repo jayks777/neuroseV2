@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getData, postData, putData, deleteData } from "../../api/requests";
+import api from "../../api/requests";
 
 function getInitials(name) {
   return name
@@ -35,7 +35,7 @@ export default function UserTable() {
 
   async function fetchUsers() {
     try {
-      const data = await getData("/user/");
+      const data = await api.getData("/user/");
       setUsers(data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -91,14 +91,14 @@ export default function UserTable() {
     try {
       if (editId !== null) {
         // UPDATE
-        const updatedUser = await putData(`/user/update/${editId}`, form);
+        const updatedUser = await api.putData(`/user/update/${editId}`, form);
 
         setUsers((prev) =>
           prev.map((u) => (u.id === editId ? updatedUser : u)),
         );
       } else {
         // CREATE
-        const newUser = await postData("/user/create", form);
+        const newUser = await api.postData("/user/create", form);
 
         setUsers((prev) => [...prev, newUser]);
       }
@@ -115,7 +115,7 @@ export default function UserTable() {
 
   async function doDelete() {
     try {
-      await deleteData(`/user/delete/${deleteId}`);
+      await api.deleteData(`/user/delete/${deleteId}`);
 
       setUsers((prev) => prev.filter((u) => u.id !== deleteId));
 
@@ -176,7 +176,6 @@ export default function UserTable() {
           </button>
         </div>
 
-        {/* Table */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead>
