@@ -1,3 +1,5 @@
+#DESATIVADA
+
 from fastapi import APIRouter, Depends
 from db import schemas, models
 from sqlalchemy.orm import Session

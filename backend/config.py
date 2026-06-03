@@ -1,5 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
-from routes.user import router as user_router
+#from routes.user import router as user_router
+from routes.auth import router as auth_router
 
 #incluir todas as configurações aqui
 def configure_all(app):
@@ -21,4 +22,5 @@ def configure_database():
     Base.metadata.create_all(bind=engine)
 
 def configure_routes(app):
-    app.include_router(user_router)
+    #app.include_router(user_router)
+    app.include_router(auth_router)
