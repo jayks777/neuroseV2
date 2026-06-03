@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from db.schemas import UserLogin, User, UserCreate
 from db.db import get_db
-from services.auth_service import create_user, authenticate_user
+from services.auth_service import AuthService
 from core.encrypt import create_access_token
 from core.auth import get_current_user
 
@@ -20,12 +20,12 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
     if user_exists:
         raise HTTPException(status_code=400, detail="Email já cadastrado")
     
-    user = create_user(db, data)
+    user = AuthService.create_user(db, data)
     return user
 
 @router.post("/login")
 def login(data: UserLogin, db: Session = Depends(get_db)):
-    user = authenticate_user(db, data.email, data.password)
+    user = AuthService.authenticate_user(db, data.email, data.password)
     if not user:
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
     
