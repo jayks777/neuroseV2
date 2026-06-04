@@ -14,9 +14,11 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setError("");
+
     try {
-      const response = await loginService(email, password);
-      login(response.access_token);
+      await loginService(email, password);
+      await login();
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);

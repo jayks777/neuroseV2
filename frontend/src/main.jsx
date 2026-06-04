@@ -7,7 +7,7 @@ import AppRoutes from "./routes/AppRoutes";
 
 import {
     AuthProvider,
-} from "./context/AuthContext";
+} from "./context/authContext";
 
 createRoot(
     document.getElementById("root")

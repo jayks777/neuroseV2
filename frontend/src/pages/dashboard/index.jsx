@@ -1,29 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { useEffect, useState } from "react";
-import api from "../../api/requests";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const { logout } = useAuth();
 
-  function handleLogout() {
-    logout();
-    navigate("/login");
-  }
+    const {
+        user,
+        logout,
+    } = useAuth();
 
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        const data = await api.getData("/auth/me");
-        setUser(data);
-      } catch {
-        console.log("Erro ao carregar usuário");
-      }
+    async function handleLogout() {
+        await logout();
+        navigate("/login");
     }
-    loadUser();
-  }, []);
 
   return (
     <div className="min-h-screen bg-[#0d0d10] text-[#e2e2e8] font-sans">

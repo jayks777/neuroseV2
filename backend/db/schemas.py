@@ -2,15 +2,15 @@ from pydantic import BaseModel, Field, EmailStr
 
 class UserCreate(BaseModel):
     name: str = Field(
-        min_lenght=3,
-        max_lenght=30,
+        min_length=3,
+        max_length=30,
     )
     
     email: EmailStr
     
     password: str = Field(
-        min_lenght=8,
-        max_lenght = 128,
+        min_length=8,
+        max_length = 128,
     )
     
 class User(BaseModel):
@@ -19,7 +19,7 @@ class User(BaseModel):
     email: str
 
     class Config:
-        form_atributes = True
+        from_attributes = True
         
 class UserLogin(BaseModel):
     email: EmailStr

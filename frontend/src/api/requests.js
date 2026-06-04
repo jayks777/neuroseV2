@@ -4,20 +4,30 @@ class ApiRequests {
     }
 
     getHeaders() {
-        const token =
-            localStorage.getItem(
-                "token"
-            );
-
         return {
             "Content-Type":
-                "application/json",
-
-            ...(token && {
-                Authorization:
-                    `Bearer ${token}`
-            })
+                "application/json"
         };
+    }
+
+    async handleResponse(response) {
+        const contentType =
+            response.headers.get("content-type") || "";
+
+        const data =
+            contentType.includes("application/json")
+                ? await response.json()
+                : null;
+
+        if (!response.ok) {
+            throw new Error(
+                data?.detail ||
+                data?.message ||
+                `Erro HTTP ${response.status}`
+            );
+        }
+
+        return data;
     }
 
     //GET
@@ -46,10 +56,12 @@ class ApiRequests {
             const response =
                 await fetch(url, {
                     headers:
-                        this.getHeaders()
+                        this.getHeaders(),
+                    credentials:
+                        "include"
                 });
 
-            return response.json();
+            return this.handleResponse(response);
 
         } catch (error) {
 
@@ -69,12 +81,14 @@ class ApiRequests {
                     method: "POST",
                     headers:
                         this.getHeaders(),
+                    credentials:
+                        "include",
                     body:
                         JSON.stringify(data)
                 }
             );
 
-        return response.json();
+        return this.handleResponse(response);
     }
 
     //PUT
@@ -87,12 +101,14 @@ class ApiRequests {
                     method: "PUT",
                     headers:
                         this.getHeaders(),
+                    credentials:
+                        "include",
                     body:
                         JSON.stringify(data)
                 }
             );
 
-        return response.json();
+        return this.handleResponse(response);
     }
     //DELETE
     async deleteData(endpoint) {
@@ -103,11 +119,13 @@ class ApiRequests {
                 {
                     method: "DELETE",
                     headers:
-                        this.getHeaders()
+                        this.getHeaders(),
+                    credentials:
+                        "include"
                 }
             );
 
-        return response.json();
+        return this.handleResponse(response);
     }
 }
 const api = new ApiRequests();

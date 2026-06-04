@@ -1,13 +1,9 @@
-import { createContext, useState, useEffect } from "react";
-import { isTokenExpired } from "../utils/token";
+import { useState, useEffect } from "react";
 
 import api from "../api/requests";
-
-export const AuthContext = createContext(null);
+import { AuthContext } from "./auth";
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-
   const [user, setUser] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -17,11 +13,7 @@ export function AuthProvider({ children }) {
       const data = await api.getData("/auth/me");
 
       setUser(data);
-    } catch (error) {
-      localStorage.removeItem("token");
-
-      setToken(null);
-
+    } catch {
       setUser(null);
     } finally {
       setLoading(false);
@@ -30,20 +22,6 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     async function validateAuth() {
-      if (!token) {
-        setLoading(false);
-
-        return;
-      }
-
-      if (isTokenExpired(token)) {
-        logout();
-
-        setLoading(false);
-
-        return;
-      }
-
       try {
         const user = await api.getData("/auth/me");
 
@@ -56,18 +34,18 @@ export function AuthProvider({ children }) {
     }
 
     validateAuth();
-  }, [token]);
+  }, []);
 
-  const login = (jwt) => {
-    localStorage.setItem("token", jwt);
-
-    setToken(jwt);
+  const login = async () => {
+    await loadUser();
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-
-    setToken(null);
+  const logout = async () => {
+    try {
+      await api.postData("/auth/logout", {});
+    } catch {
+      // Mesmo se o servidor falhar, limpamos o estado local da sessão.
+    }
 
     setUser(null);
   };
@@ -75,7 +53,6 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        token,
         user,
         loading,
         login,
