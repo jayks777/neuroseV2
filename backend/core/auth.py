@@ -1,3 +1,4 @@
+#core/auth.py
 from jose import jwt, JWTError
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -17,14 +18,14 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: session = Depends(
             algorithms=[ALGORITHM])
         )
         
-        user_id = payload.get("sub")
-        if not user_id:
+        user_email = payload.get("sub")
+        if not user_email:
             raise HTTPException(status_code=401, detail="Invalid token")
 
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(User.email == user_email).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return user

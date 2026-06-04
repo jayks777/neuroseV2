@@ -1,3 +1,4 @@
+# routes/auth.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -6,6 +7,7 @@ from db.db import get_db
 from services.auth_service import AuthService
 from core.encrypt import create_access_token
 from core.auth import get_current_user
+from db.models import User as UserModel
 
 router = APIRouter(
     prefix="/auth",
@@ -15,7 +17,7 @@ router = APIRouter(
 @router.post("/register", response_model=User)
 def register(data: UserCreate, db: Session = Depends(get_db)):
     
-    user_exists = (db.query(User).filter(User.email == data.email).first())
+    user_exists = (db.query(UserModel).filter(UserModel.email == data.email).first())
     
     if user_exists:
         raise HTTPException(status_code=400, detail="Email já cadastrado")
